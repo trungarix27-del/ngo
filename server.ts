@@ -85,6 +85,75 @@ app.get('/api/cards/:id', (req, res) => {
   res.json({ success: true, card });
 });
 
+// Helper to extract base64 images and audio to static public files
+function extractAssetsAndCleanCard(card: any) {
+  const cleaned = { ...card };
+  if (cleaned.photoUrl && typeof cleaned.photoUrl === 'string' && cleaned.photoUrl.startsWith('data:image')) {
+    try {
+      const parts = cleaned.photoUrl.split(';base64,');
+      if (parts.length === 2) {
+        const ext = parts[0].includes('png') ? 'png' : parts[0].includes('webp') ? 'webp' : 'jpg';
+        const buffer = Buffer.from(parts[1], 'base64');
+        const imgDir = path.join(__dirname, 'public', 'images');
+        fs.mkdirSync(imgDir, { recursive: true });
+        fs.writeFileSync(path.join(imgDir, `birthday-photo.${ext}`), buffer);
+        cleaned.photoUrl = `./images/birthday-photo.${ext}`;
+      }
+    } catch (err) {
+      console.error('Failed to extract photo:', err);
+    }
+  }
+
+  if (cleaned.customMusicUrl && typeof cleaned.customMusicUrl === 'string' && cleaned.customMusicUrl.startsWith('data:audio')) {
+    try {
+      const parts = cleaned.customMusicUrl.split(';base64,');
+      if (parts.length === 2) {
+        const ext = 'mp3';
+        const buffer = Buffer.from(parts[1], 'base64');
+        const audioDir = path.join(__dirname, 'public', 'audio');
+        fs.mkdirSync(audioDir, { recursive: true });
+        fs.writeFileSync(path.join(audioDir, `birthday-song.${ext}`), buffer);
+        cleaned.customMusicUrl = `./audio/birthday-song.${ext}`;
+      }
+    } catch (err) {
+      console.error('Failed to extract audio:', err);
+    }
+  }
+  return cleaned;
+}
+
+// Serve public directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Download customized zip file (locked in recipient view-only mode for deployment)
+app.all(['/api/download-zip', '/api/export-recipient-zip'], async (req, res) => {
+  try {
+    const { execSync } = await import('child_process');
+    
+    // If client sends cardData, update defaultCard.ts
+    if (req.body && req.body.cardData) {
+      const cleanCard = extractAssetsAndCleanCard(req.body.cardData);
+      const code = `import { BirthdayCardData } from '../types/card';\n\nexport const DEFAULT_CARD_DATA: BirthdayCardData = ${JSON.stringify(cleanCard, null, 2)};\n`;
+      fs.writeFileSync(path.join(__dirname, 'src', 'utils', 'defaultCard.ts'), code, 'utf-8');
+    }
+
+    // Run export_zip.py
+    execSync('python3 export_zip.py', { cwd: __dirname });
+    const zipPath = path.join(__dirname, 'public', 'download', 'birthday-app-customized.zip');
+
+    if (fs.existsSync(zipPath)) {
+      res.setHeader('Content-Type', 'application/zip');
+      res.setHeader('Content-Disposition', 'attachment; filename="thiep-sinh-nhat-customized.zip"');
+      return res.sendFile(zipPath);
+    } else {
+      res.status(500).json({ error: 'Failed to find zip file' });
+    }
+  } catch (err: any) {
+    console.error('Download error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Vite middleware in dev or static serving in production
 async function startServer() {
   if (process.env.NODE_ENV !== 'production') {

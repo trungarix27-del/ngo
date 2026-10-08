@@ -1,20 +1,30 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# 🎂 Ứng Dụng Thiệp Sinh Nhật 3D & Pháo Hoa Tương Tác
 
-# Run and deploy your AI Studio app
+Ứng dụng thiệp chúc mừng sinh nhật điện tử độc đáo với:
+- 🎈 Bánh kem 3D tương tác thổi nến theo nhạc
+- 🎆 Hiệu ứng pháo hoa rực rỡ và các lời chúc bí mật
+- 🎵 Nhạc sinh nhật du dương
+- 📱 Tối ưu hoàn hảo 100% cho mọi thiết bị di động (Zalo, Messenger, Safari, Chrome)
 
-This contains everything you need to run your app locally.
+---
 
-View your app in AI Studio: https://ai.studio/apps/de02675e-632c-457a-a256-0c5b11abc748
+## 🚀 Hướng Dẫn Deploy Lên Vercel (1 Phút)
 
-## Run Locally
+1. **Tải toàn bộ mã nguồn** lên một Repository mới trên GitHub của bạn.
+2. Đăng nhập vào [Vercel](https://vercel.com) -> Nhấn **Add New...** -> **Project**.
+3. Chọn Repository vừa tải lên và bấm **Deploy**.
+4. Dự án đã được cấu hình sẵn `vercel.json` và `vite.config.ts`, Vercel sẽ tự động build thành công ngay trong lần đầu tiên!
 
-**Prerequisites:**  Node.js
+---
 
+## 💻 Chạy Thử Trên Máy Tính (Local)
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+```bash
+# 1. Cài đặt thư viện
+npm install
+
+# 2. Chạy môi trường dev
+npm run dev
+```
+
+Mở trình duyệt tại: `http://localhost:3000` hoặc cổng Vite thông báo.
