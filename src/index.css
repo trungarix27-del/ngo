@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+@layer base {
+  html, body {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+}
+
+.font-handwriting {
+  font-family: 'Dancing Script', cursive;
+  line-height: 1.35;
+  padding-bottom: 0.15em;
+}
+
+.font-display {
+  font-family: 'Pacifico', cursive;
+  line-height: 1.35;
+  padding-bottom: 0.15em;
+}
+
+@keyframes flicker {
+  0%, 100% {
+    transform: scale(1) rotate(-1deg);
+    opacity: 0.95;
+    filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.9));
+  }
+  25% {
+    transform: scale(1.08, 0.95) rotate(2deg);
+    opacity: 1;
+    filter: drop-shadow(0 0 14px rgba(245, 158, 11, 1));
+  }
+  50% {
+    transform: scale(0.92, 1.05) rotate(-2deg);
+    opacity: 0.88;
+    filter: drop-shadow(0 0 6px rgba(251, 146, 60, 0.8));
+  }
+  75% {
+    transform: scale(1.04, 1.02) rotate(1deg);
+    opacity: 0.98;
+    filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.95));
+  }
+}
+
+.animate-flicker {
+  animation: flicker 1.2s infinite ease-in-out;
+  transform-origin: bottom center;
+}
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(2deg);
+  }
+}
+
+.animate-float {
+  animation: float-slow 4s ease-in-out infinite;
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 3s ease-in-out infinite;
+}
+
+/* Glassmorphism helpers */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-panel-dark {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}

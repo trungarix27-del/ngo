@@ -1,0 +1,6 @@
+{
+  "name": "Thiệp Sinh Nhật Tương Tác & Pháo Hoa",
+  "description": "Tạo và gửi thiệp chúc mừng sinh nhật tương tác sống động với pháo hoa rực rỡ, âm nhạc tùy chọn, hình ảnh cá nhân hóa và chia sẻ dễ dàng qua liên kết.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
