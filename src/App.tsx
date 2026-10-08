@@ -22,24 +22,9 @@ import { FireworksCanvas } from './components/FireworksCanvas';
 import { CardViewer } from './components/CardViewer';
 import { CardEditorModal } from './components/CardEditorModal';
 import { ShareModal } from './components/ShareModal';
-
-const DEFAULT_CARD_DATA: BirthdayCardData = {
-  recipientName: 'Minh Anh',
-  senderName: 'Bạn thân tri kỷ',
-  age: 22,
-  title: 'Chúc Mừng Sinh Nhật Tuổi Mới Rực Rỡ!',
-  message:
-    'Chúc mừng sinh nhật bạn thân của tao! Bước sang tuổi mới, chúc mày luôn giữ mãi nụ cười rạng rỡ, tâm hồn an yên, tiền đầy túi, tình đầy tim và sớm đạt được mọi hoài bão mà mày hằng ấp ủ nhé. Cảm ơn vì đã luôn đồng hành cùng nhau! 🎂✨🥂💖',
-  secretWish: 'Cuối tuần này tao bao trọn một bữa tiệc bất ngờ hoành tráng nhé! Hẹn gặp lúc 19h! 🎁🎉',
-  photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80',
-  photoCaption: 'Tuổi mới rạng ngời như ánh mặt trời ✨',
-  theme: 'sunset-joy',
-  cakeFlavor: 'strawberry',
-  candleCount: 3,
-  musicTrack: 'synth-birthday',
-  autoPlayFireworks: true,
-  soundEnabled: false,
-};
+import { ExportCodeModal } from './components/ExportCodeModal';
+import { DEFAULT_CARD_DATA } from './utils/defaultCard';
+import { IS_RECIPIENT_BUILD } from './config';
 
 export default function App() {
   // Synchronous initialization ensures instant restoration on page reload
@@ -57,10 +42,14 @@ export default function App() {
   });
 
   const [cardId, setCardId] = useState<string | null>(() => getCardIdFromUrl());
-  const [isRecipientMode, setIsRecipientMode] = useState<boolean>(() => isRecipientViewOnly());
+  const [isRecipientMode, setIsRecipientMode] = useState<boolean>(() => {
+    if (IS_RECIPIENT_BUILD) return true;
+    return isRecipientViewOnly();
+  });
   const [isPreviewingRecipient, setIsPreviewingRecipient] = useState<boolean>(false);
   const [isEditorOpen, setIsEditorOpen] = useState<boolean>(false);
   const [isShareOpen, setIsShareOpen] = useState<boolean>(false);
+  const [isExportOpen, setIsExportOpen] = useState<boolean>(false);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const syncTimeoutRef = useRef<number | null>(null);
 
@@ -168,7 +157,7 @@ export default function App() {
     }
   };
 
-  const isViewOnlyEffective = isRecipientMode || isPreviewingRecipient;
+  const isViewOnlyEffective = IS_RECIPIENT_BUILD || isRecipientMode || isPreviewingRecipient;
 
   // Generate robust short URLs for sharing
   const baseShareUrl = buildShareUrl(cardId, cardData, false);
@@ -190,6 +179,7 @@ export default function App() {
           isViewOnly={isViewOnlyEffective}
           onOpenEditor={() => setIsEditorOpen(true)}
           onOpenShare={() => setIsShareOpen(true)}
+          onOpenExport={() => setIsExportOpen(true)}
           onUpdateCardData={handleSaveCardData}
           onTogglePreviewRecipient={
             isRecipientMode ? undefined : () => setIsPreviewingRecipient((prev) => !prev)
@@ -197,23 +187,32 @@ export default function App() {
         />
       </div>
 
-      {/* Customizer Modal */}
-      <CardEditorModal
-        isOpen={isEditorOpen}
-        onClose={() => setIsEditorOpen(false)}
-        initialData={cardData}
-        onSave={handleSaveCardData}
-      />
+      {/* Customizer & Share Modals (Only in creator mode, never in recipient build) */}
+      {!IS_RECIPIENT_BUILD && (
+        <>
+          <CardEditorModal
+            isOpen={isEditorOpen}
+            onClose={() => setIsEditorOpen(false)}
+            initialData={cardData}
+            onSave={handleSaveCardData}
+          />
 
-      {/* Share Modal */}
-      <ShareModal
-        isOpen={isShareOpen}
-        onClose={() => setIsShareOpen(false)}
-        baseShareUrl={baseShareUrl}
-        recipientShareUrl={recipientShareUrl}
-        recipientName={cardData.recipientName}
-        onPreviewRecipientMode={() => setIsPreviewingRecipient(true)}
-      />
+          <ShareModal
+            isOpen={isShareOpen}
+            onClose={() => setIsShareOpen(false)}
+            baseShareUrl={baseShareUrl}
+            recipientShareUrl={recipientShareUrl}
+            recipientName={cardData.recipientName}
+            onPreviewRecipientMode={() => setIsPreviewingRecipient(true)}
+          />
+
+          <ExportCodeModal
+            isOpen={isExportOpen}
+            onClose={() => setIsExportOpen(false)}
+            cardData={cardData}
+          />
+        </>
+      )}
     </div>
   );
 }

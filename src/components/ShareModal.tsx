@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Copy, Check, Share2, X, QrCode, Sparkles, ExternalLink, Eye, Lock } from 'lucide-react';
+import { Copy, Check, Share2, X, QrCode, Sparkles, ExternalLink, Eye, Lock, Download, FolderGit2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface ShareModalProps {
@@ -188,6 +188,30 @@ export const ShareModal: React.FC<ShareModalProps> = ({
               </>
             )}
           </button>
+        </div>
+
+        {/* Download Zip Section */}
+        <div className="mb-4 p-3.5 rounded-2xl bg-gradient-to-br from-indigo-950/60 to-purple-950/60 border border-indigo-500/30 text-xs">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="font-semibold text-indigo-200 flex items-center gap-1.5">
+              <FolderGit2 className="w-4 h-4 text-indigo-400" />
+              Tải Code ZIP Đã Tùy Chỉnh (Cho GitHub / Vercel)
+            </span>
+            <span className="text-[10px] bg-indigo-500/25 border border-indigo-400/30 text-indigo-200 px-2 py-0.5 rounded-full font-medium">
+              Đã lưu {recipientName}
+            </span>
+          </div>
+          <p className="text-[11px] text-slate-300/90 mb-3 leading-relaxed">
+            File ZIP này chứa toàn bộ dự án với cấu trúc chuẩn Vercel và <strong>đã được nướng sẵn 100% nội dung bạn vừa chỉnh</strong> (tên {recipientName}, tuổi, ảnh, nhạc, lời chúc 8/10). Đẩy lên GitHub không bao giờ bị về bản gốc!
+          </p>
+          <a
+            href="/api/download-zip"
+            download="birthday-app-customized.zip"
+            className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold flex items-center justify-center gap-2 text-xs transition-all shadow-md active:scale-98 cursor-pointer"
+          >
+            <Download className="w-4 h-4" />
+            <span>Tải ZIP về máy ngay (birthday-app-customized.zip)</span>
+          </a>
         </div>
 
         {/* Action Buttons */}

@@ -3,6 +3,7 @@ import { BirthdayCardData, ThemeId } from '../types/card';
 import { BirthdayCake } from './BirthdayCake';
 import { PhotoFrame } from './PhotoFrame';
 import { audioEngine } from '../utils/audioEngine';
+import { IS_RECIPIENT_BUILD } from '../config';
 import confetti from 'canvas-confetti';
 import {
   Share2,
@@ -12,6 +13,7 @@ import {
   PartyPopper,
   Eye,
   RotateCcw,
+  Download,
 } from 'lucide-react';
 
 interface CardViewerProps {
@@ -19,6 +21,7 @@ interface CardViewerProps {
   isViewOnly?: boolean;
   onOpenEditor: () => void;
   onOpenShare: () => void;
+  onOpenExport?: () => void;
   onUpdateCardData: (data: BirthdayCardData) => void;
   onTogglePreviewRecipient?: () => void;
 }
@@ -28,6 +31,7 @@ export const CardViewer: React.FC<CardViewerProps> = ({
   isViewOnly = false,
   onOpenEditor,
   onOpenShare,
+  onOpenExport,
   onTogglePreviewRecipient,
 }) => {
   const [hasOpenedGift, setHasOpenedGift] = useState<boolean>(false);
@@ -126,7 +130,7 @@ export const CardViewer: React.FC<CardViewerProps> = ({
       className={`min-h-[100dvh] w-full bg-gradient-to-br ${currentTheme.bgGradient} text-slate-100 flex flex-col justify-center items-center relative overflow-x-hidden transition-colors duration-700`}
     >
       {/* Discreet Creator Controls (Top-Right Corner, ONLY visible for Creator, hidden completely for Recipient) */}
-      {!isViewOnly && (
+      {!isViewOnly && !IS_RECIPIENT_BUILD && (
         <div className="fixed top-3 right-3 sm:top-5 sm:right-5 z-40 flex items-center gap-1.5 sm:gap-2">
           {onTogglePreviewRecipient && (
             <button
@@ -165,12 +169,24 @@ export const CardViewer: React.FC<CardViewerProps> = ({
             <Share2 className="w-3.5 h-3.5 shrink-0" />
             <span className="hidden sm:inline">Chia sẻ</span>
           </button>
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onOpenExport) onOpenExport();
+            }}
+            className="px-2.5 sm:px-3.5 py-1.5 rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white border border-emerald-400/40 text-xs font-semibold flex items-center gap-1.5 shadow-xl backdrop-blur-xl transition-all cursor-pointer active:scale-95 touch-manipulation"
+            title="Xuất mã nguồn ZIP đã lưu tùy chỉnh ở chế độ người nhận để đưa lên GitHub / Vercel"
+          >
+            <Download className="w-3.5 h-3.5 text-emerald-200 shrink-0" />
+            <span>Xuất code</span>
+          </button>
         </div>
       )}
 
       {/* Subtle toggle back to editor if creator is previewing */}
-      {isViewOnly && onTogglePreviewRecipient && (
-        <div className="fixed top-3 right-3 sm:top-5 sm:right-5 z-40">
+      {isViewOnly && onTogglePreviewRecipient && !IS_RECIPIENT_BUILD && (
+        <div className="fixed top-3 right-3 sm:top-5 sm:right-5 z-40 flex items-center gap-1.5 sm:gap-2">
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -181,6 +197,18 @@ export const CardViewer: React.FC<CardViewerProps> = ({
           >
             <RotateCcw className="w-3.5 h-3.5 text-amber-300" />
             <span className="text-xs">Sửa thiệp</span>
+          </button>
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onOpenExport) onOpenExport();
+            }}
+            className="px-2.5 sm:px-3 py-1.5 rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white border border-emerald-400/40 text-xs font-semibold flex items-center gap-1.5 shadow-xl backdrop-blur-md transition-all cursor-pointer active:scale-95 touch-manipulation"
+            title="Xuất mã nguồn ZIP đã lưu tùy chỉnh ở chế độ người nhận để đưa lên GitHub / Vercel"
+          >
+            <Download className="w-3.5 h-3.5 text-emerald-200 shrink-0" />
+            <span>Xuất code</span>
           </button>
         </div>
       )}
